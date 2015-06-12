@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import zipfile
 import hashlib
@@ -23,6 +23,7 @@ class pycrits(object):
     _DOMAINS           = 'domains/'
     _EMAILS            = 'emails/'
     _EVENTS            = 'events/'
+    _EXPLOITS          = 'exploits/'
     _INDICATORS        = 'indicators/'
     _IPS               = 'ips/'
     _PCAPS             = 'pcaps/'
@@ -156,6 +157,9 @@ class pycrits(object):
     def events(self, params={}, total=-1):
         return self._fetch_generator(self._EVENTS, total, params=params)
 
+	def exploits(self, params={}, total=-1):
+        return self._fetch_generator(self._EXPLOITS, total, params=params)	
+		
     def indicators(self, params={}, total=-1):
         return self._fetch_generator(self._INDICATORS, total, params=params)
 
@@ -223,6 +227,12 @@ class pycrits(object):
     # Fetch a campaign by name.
     def campaign_by_name(self, name, params={}):
         params['c-name'] = name
+        results = self._single_fetch(self._CAMPAIGNS, params)
+        return results['objects']
+
+    # Fetch a sample by filename.
+    def sample_by_name(self, name, params={}):
+        params['filename'] = name
         results = self._single_fetch(self._CAMPAIGNS, params)
         return results['objects']
 
@@ -404,6 +414,12 @@ class pycrits(object):
         params['description'] = description
         params['source'] = source
         return self._post(self._EVENTS, params)
+
+    def add_exploit(self, name, cve, source, params={}):
+        params['name'] = name
+        params['cve'] = cve
+        params['source'] = source
+        return self._post(self._EXPLOITS, params)
 
     def add_indicator(self, type_, value, source, params={}):
         params['type'] = type_
